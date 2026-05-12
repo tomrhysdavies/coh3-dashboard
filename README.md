@@ -1,2 +1,2 @@
 # coh3-dashboard
-Dashboard visualising COH3 build orders and strategies
+"My personal COH3 tactical dashboard. Use the link in the sidebar to view the live version."
