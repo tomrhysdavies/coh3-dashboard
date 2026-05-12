@@ -3,61 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoH Strategic Command</title>
+    <title>CoH Strategic Command v10</title>
     <style>
         :root {
-            --accent: #d4af37;
-            --bg: #0f1112;
-            --card-bg: #1a1d1f;
-            --text-main: #e0e0e0;
-            --text-dim: #8a8d90;
-            --border: #2d3135;
-            --color-unit: #2e5a88;
-            --color-build: #882e2e;
-            --color-tech: #887a2e;
-            --color-upgrade: #ff9800;
+            --accent: #d4af37; --bg: #0f1112; --card-bg: #1a1d1f; --text-main: #e0e0e0;
+            --text-dim: #8a8d90; --border: #2d3135; --color-unit: #2e5a88;
+            --color-build: #882e2e; --color-tech: #887a2e; --color-upgrade: #ff9800;
         }
-
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); margin: 0; display: flex; height: 100vh; overflow: hidden; }
-
         nav { width: 80px; background: #08090a; border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 15px; }
-        .faction-icon { width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #141617; color: var(--text-dim); font-size: 0.7rem; font-weight: bold; transition: 0.2s; }
-        .faction-icon.active { background: var(--accent); color: #000; }
-
+        .faction-icon { width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #141617; color: var(--text-dim); font-size: 0.7rem; font-weight: bold; transition: 0.2s; border: 1px solid transparent; }
+        .faction-icon.active { background: var(--accent); color: #000; border-color: var(--accent); }
         main { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; }
-        .header-controls { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; width: 100%; margin: 0 auto 20px; }
-
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1100px; width: 100%; margin: 0 auto; }
         .phase-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
         .phase-title { color: var(--accent); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; margin-bottom: 15px; display: block; }
-
-        .item { display: flex; align-items: center; padding: 8px; margin-bottom: 6px; border-radius: 4px; background: rgba(255,255,255,0.02); cursor: pointer; position: relative; }
+        .item { display: flex; align-items: center; padding: 10px; margin-bottom: 8px; border-radius: 6px; background: rgba(255,255,255,0.03); cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
+        .item:hover { border-color: #444; background: rgba(255,255,255,0.06); }
         .item.completed { opacity: 0.2; filter: grayscale(1); }
-        .item.upgrade { margin-left: 20px; border-left: 2px dashed var(--border); background: rgba(255, 152, 0, 0.03); }
-        
-        .portrait { width: 28px; height: 28px; border-radius: 3px; margin-right: 10px; object-fit: cover; background: #000; border: 1px solid var(--border); }
-        .portrait[src=""] { display: none; } /* Hide if empty */
-
-        .tag { width: 4px; height: 20px; margin-right: 10px; border-radius: 2px; }
+        .item.upgrade { margin-left: 20px; border-left: 2px dashed var(--color-upgrade); background: rgba(255, 152, 0, 0.03); }
+        .portrait { width: 36px; height: 36px; border-radius: 4px; margin-right: 12px; object-fit: cover; background: #000; border: 1px solid var(--border); }
+        .tag { width: 4px; height: 28px; margin-right: 12px; border-radius: 2px; }
         .tag-unit { background: var(--color-unit); }
         .tag-build { background: var(--color-build); }
         .tag-tech { background: var(--color-tech); }
         .tag-upgrade { background: var(--color-upgrade); }
-
         .intel-panel { max-width: 1100px; width: 100%; margin: 40px auto 0; padding-top: 30px; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        .intel-box h3 { font-size: 0.8rem; text-transform: uppercase; color: var(--accent); margin-bottom: 15px; letter-spacing: 1px; }
+        .intel-box h3 { font-size: 0.8rem; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; letter-spacing: 1px; }
         .stack-list { padding: 0; margin: 0; list-style: none; font-size: 0.85rem; }
-        .stack-list li { margin-bottom: 12px; color: var(--text-dim); }
-        .stack-list b { color: var(--text-main); display: block; }
-
-        .counter-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-        .counter-table th { text-align: left; color: var(--accent); padding: 8px; border-bottom: 1px solid var(--border); }
-        .counter-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-dim); }
-
-        .btn { padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+        .stack-list li { margin-bottom: 10px; color: var(--text-dim); border-left: 2px solid var(--accent); padding-left: 10px; }
+        .counter-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; color: var(--text-dim); }
+        .counter-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .btn { padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
         .btn-edit { background: var(--accent); color: #000; }
         .btn-save { background: #2e7d32; color: white; }
-        .add-btn { width: 100%; background: none; border: 1px dashed var(--border); color: var(--text-dim); padding: 8px; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -65,16 +44,16 @@
 <nav id="factionNav"></nav>
 
 <main>
-    <div class="header-controls">
-        <h2 id="currentFactionLabel" style="font-weight: 300; margin: 0;">UNITED STATES FORCES</h2>
-        <div style="display: flex; gap: 10px;">
-            <button class="btn btn-edit" id="editToggle" onclick="toggleEdit()">EDIT BUILDS</button>
-            <button class="btn btn-save" onclick="saveData()">SAVE STATE</button>
-            <button class="btn" style="background:#444; color:white;" onclick="resetProgress()">RESET RUN</button>
+    <div class="header-controls" style="display:flex; justify-content:space-between; align-items:center; max-width:1100px; width:100%; margin: 0 auto 20px;">
+        <h2 id="currentFactionLabel" style="font-weight:300; margin:0; letter-spacing:2px;">US FORCES</h2>
+        <div style="display:flex; gap:10px;">
+            <button class="btn btn-edit" id="editToggle" onclick="toggleEdit()">Edit Mode</button>
+            <button class="btn btn-save" onclick="saveData()">Save Build</button>
+            <button class="btn" style="background:#444; color:white;" onclick="resetProgress()">Clear Run</button>
         </div>
     </div>
 
-    <div id="stratNav" style="display: flex; gap: 10px; margin-bottom: 20px; justify-content: center;"></div>
+    <div id="stratNav" style="display:flex; gap:10px; margin-bottom:20px; justify-content:center;"></div>
 
     <div class="grid" id="buildGrid">
         <div class="phase-card" id="early"><span class="phase-title">Early Game</span><div class="items-container"></div></div>
@@ -84,123 +63,100 @@
 
     <div class="intel-panel">
         <div class="intel-box">
-            <h3>🧠 The Mental Stack</h3>
+            <h3>🧠 Mental Stack</h3>
             <ul class="stack-list">
-                <li><b>Are my resources floating?</b> If you have >500 Manpower, spend it now.</li>
-                <li><b>Where is the enemy's Fuel?</b> Cutting fuel delays their tanks.</li>
-                <li><b>Is my retreat path clear?</b> Don't get pinned by snares.</li>
-                <li><b>Am I using my Munitions?</b> Mines and grenades win games.</li>
+                <li><b>Resource Check:</b> Manpower > 400? Buy a unit or upgrade.</li>
+                <li><b>Map Control:</b> Are you cutting off their Fuel/Munis?</li>
+                <li><b>VPs:</b> Don't ignore the clock. Secure at least two.</li>
             </ul>
         </div>
         <div class="intel-box">
-            <h3>⚔️ Dynamic Counters</h3>
+            <h3>⚔️ Quick Counters</h3>
             <table class="counter-table">
-                <thead><tr><th>If you see...</th><th>You need...</th></tr></thead>
-                <tbody>
-                    <tr><td>Mass Infantry</td><td>MG42 / Greyhound / 8Rad</td></tr>
-                    <tr><td>Light Vehicles</td><td>AT Guns / Bazookas</td></tr>
-                    <tr><td>Heavy Tanks</td><td>Tank Destroyers / Heavy AT</td></tr>
-                    <tr><td>Buildings</td><td>Mortars / Flamethrowers</td></tr>
-                </tbody>
+                <tr><td>Infantry Blobs</td><td>MG42 / Nebelwerfer / Greyhound</td></tr>
+                <tr><td>Light Vehicles</td><td>AT Guns / Bazookas / Pak 38</td></tr>
+                <tr><td>Tanks</td><td>Hellcat / Panzer IV / 17-Pounder</td></tr>
             </table>
         </div>
     </div>
 </main>
 
 <script>
+    // PERMANENT IMAGE LIBRARY
+    // Map unit names to the image filenames you upload to GitHub.
+    const unitLibrary = {
+        // USF
+        "scout": "scout.png", "riflemen": "riflemen.png", "engineers": "engineers.png", "captain": "captain.png", "paratroopers": "paratroopers.png", "m1 mortar": "mortar.png", "greyhound": "greyhound.png", "sherman": "sherman.png", "hellcat": "hellcat.png",
+        // WEHR
+        "pioneer": "pioneer.png", "grenadier": "grenadier.png", "jaeger": "jaeger.png", "mg42": "mg42.png", "panzer iv": "panzer_iv.png", "stug iii": "stug.png", "tiger": "tiger.png",
+        // UKF
+        "infantry section": "infantry_section.png", "royal engineers": "royal_engineers.png", "vickers hmg": "vickers_hmg.png", "cromwell": "cromwell.png", "matilda": "matilda.png",
+        // DAK
+        "panzerpioneer": "panzerpioneer.png", "panzergrenadier": "panzergrenadier.png", "8 rad": "8_rad.png", "panzer iii": "panzer_iii.png", "marder": "marder.png"
+    };
+
     const defaultData = {
-        USF: {
-            "Airborne": {
-                early: [{n: "Scout", t: "unit", i: ""}],
-                mid: [{n: "Paratroopers", t: "unit", i: "image_8df242.png"}, {n: "M1919 LMG Upgrade", t: "upgrade", i: ""}],
-                end: []
-            }
-        },
-        WEHR: { "Blitz": { early: [], mid: [], end: [] } },
+        USF: { "Standard": { early: [{n: "Scout", t: "unit"}, {n: "Riflemen", t: "unit"}], mid: [{n: "Greyhound", t: "unit"}], end: [{n: "Sherman", t: "unit"}] } },
+        WEHR: { "Defensive": { early: [{n: "Pioneer", t: "unit"}, {n: "MG42", t: "unit"}], mid: [{n: "Grenadier", t: "unit"}], end: [] } },
         UKF: { "Standard": { early: [], mid: [], end: [] } },
         DAK: { "Standard": { early: [], mid: [], end: [] } }
     };
 
-    let state = JSON.parse(localStorage.getItem('coh_state_v8')) || defaultData;
-    let currentFac = 'USF';
-    let currentStrat = Object.keys(state[currentFac])[0];
-    let editMode = false;
+    let state = JSON.parse(localStorage.getItem('coh_state_v10')) || defaultData;
+    let currentFac = 'USF', currentStrat = Object.keys(state['USF'])[0], editMode = false;
+
+    function renderBuild() {
+        ['early', 'mid', 'end'].forEach(phase => {
+            const container = document.querySelector(`#${phase} .items-container`);
+            container.innerHTML = '';
+            state[currentFac][currentStrat][phase].forEach((item, index) => {
+                const imgFile = unitLibrary[item.n.toLowerCase().trim()];
+                const iconHTML = imgFile ? `<img src="${imgFile}" class="portrait" onerror="this.parentElement.innerHTML='<div class=\'tag tag-${item.t}\'></div>' + this.parentElement.innerText;">` : `<div class="tag tag-${item.t}"></div>`;
+                const div = document.createElement('div');
+                div.className = `item ${item.t === 'upgrade' ? 'upgrade' : ''}`;
+                div.onclick = () => { if(!editMode) div.classList.toggle('completed'); };
+                div.innerHTML = `${iconHTML}<div style="flex:1"><div contenteditable="${editMode}" onblur="state[currentFac][currentStrat]['${phase}'][${index}].n = this.innerText">${item.n}</div></div>
+                    ${editMode ? `<span style="font-size:0.6rem; color:var(--accent); cursor:pointer;" onclick="cycleType('${phase}', ${index})">${item.t}</span>` : ''}
+                    ${editMode ? `<span style="color:#b71c1c; margin-left:10px" onclick="state[currentFac][currentStrat]['${phase}'].splice(${index}, 1); render();">×</span>` : ''}`;
+                container.appendChild(div);
+            });
+            if(editMode){
+                const b = document.createElement('button'); b.className='btn'; b.style="width:100%; background:none; border:1px dashed var(--border); color:var(--text-dim); margin-top:10px;";
+                b.innerText="+ Add"; b.onclick=()=>{ state[currentFac][currentStrat][phase].push({n:"New Unit", t:"unit"}); render(); };
+                container.appendChild(b);
+            }
+        });
+    }
+
+    function cycleType(phase, index) {
+        const types = ['unit', 'upgrade', 'build', 'tech'];
+        let current = state[currentFac][currentStrat][phase][index].t;
+        let next = types[(types.indexOf(current) + 1) % types.length];
+        state[currentFac][currentStrat][phase][index].t = next;
+        render();
+    }
 
     function renderFactions() {
-        const nav = document.getElementById('factionNav');
-        nav.innerHTML = '';
+        const nav = document.getElementById('factionNav'); nav.innerHTML = '';
         Object.keys(state).forEach(f => {
-            const el = document.createElement('div');
-            el.className = `faction-icon ${f === currentFac ? 'active' : ''}`;
-            el.innerText = f;
-            el.onclick = () => { currentFac = f; currentStrat = Object.keys(state[f])[0] || ""; render(); };
+            const el = document.createElement('div'); el.className = `faction-icon ${f === currentFac ? 'active' : ''}`;
+            el.innerText = f; el.onclick = () => { currentFac = f; currentStrat = Object.keys(state[f])[0] || ""; render(); };
             nav.appendChild(el);
         });
     }
 
     function renderStrats() {
-        const nav = document.getElementById('stratNav');
-        nav.innerHTML = '';
+        const nav = document.getElementById('stratNav'); nav.innerHTML = '';
         Object.keys(state[currentFac]).forEach(s => {
-            const el = document.createElement('div');
-            el.style = `padding: 6px 15px; background: var(--card-bg); border: 1px solid ${s === currentStrat ? 'var(--accent)' : 'var(--border)'}; border-radius: 20px; cursor: pointer; font-size: 0.8rem; color: ${s === currentStrat ? 'var(--accent)' : 'var(--text-dim)'};`;
-            el.innerHTML = `<span onclick="selectStrat('${s}')">${s}</span>`;
-            nav.appendChild(el);
+            const el = document.createElement('div'); el.style = `padding: 6px 15px; background: var(--card-bg); border: 1px solid ${s === currentStrat ? 'var(--accent)' : 'var(--border)'}; border-radius: 20px; cursor: pointer; font-size: 0.8rem; color: ${s === currentStrat ? 'var(--accent)' : 'var(--text-dim)'};`;
+            el.innerHTML = `<span onclick="currentStrat='${s}'; render();">${s}</span>`; nav.appendChild(el);
         });
     }
 
-    function selectStrat(s) { currentStrat = s; render(); }
-
-    function renderBuild() {
-        if (!currentStrat || !state[currentFac][currentStrat]) return;
-        ['early', 'mid', 'end'].forEach(phase => {
-            const container = document.querySelector(`#${phase} .items-container`);
-            container.innerHTML = '';
-            state[currentFac][currentStrat][phase].forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = `item ${item.t === 'upgrade' ? 'upgrade' : ''}`;
-                div.onclick = () => { if(!editMode) div.classList.toggle('completed'); };
-                
-                const imgHTML = item.i ? `<img src="${item.i}" class="portrait">` : `<div class="tag tag-${item.t}"></div>`;
-                
-                div.innerHTML = `
-                    ${imgHTML}
-                    <div style="flex:1">
-                        <div contenteditable="${editMode}" onblur="state[currentFac][currentStrat]['${phase}'][${index}].n = this.innerText">${item.n}</div>
-                        ${editMode ? `<div style="font-size:0.6rem; color:var(--accent)" contenteditable="true" onblur="state[currentFac][currentStrat]['${phase}'][${index}].i = this.innerText">Img: ${item.i || 'none'}</div>` : ''}
-                    </div>
-                    ${editMode ? `<span style="color:var(--color-tech); margin-right:10px" contenteditable="true" onblur="state[currentFac][currentStrat]['${phase}'][${index}].t = this.innerText">${item.t}</span>` : ''}
-                    ${editMode ? `<span style="color:#b71c1c" onclick="state[currentFac][currentStrat]['${phase}'].splice(${index}, 1); render();">×</span>` : ''}
-                `;
-                container.appendChild(div);
-            });
-            if(editMode) {
-                const add = document.createElement('button');
-                add.className = 'add-btn'; add.innerText = "+ Add";
-                add.onclick = () => { state[currentFac][currentStrat][phase].push({n: "New", t: "unit", i: ""}); render(); };
-                container.appendChild(add);
-            }
-        });
-    }
-
-    function toggleEdit() { editMode = !editMode; document.getElementById('editToggle').innerText = editMode ? "EXIT EDITING" : "EDIT BUILDS"; render(); }
-
-    function saveData() {
-        localStorage.setItem('coh_state_v8', JSON.stringify(state));
-        alert("Saved.");
-        editMode = false;
-        document.getElementById('editToggle').innerText = "EDIT BUILDS";
-        render();
-    }
-
+    function toggleEdit() { editMode = !editMode; document.getElementById('editToggle').innerText = editMode ? "Exit Mode" : "Edit Mode"; render(); }
+    function saveData() { localStorage.setItem('coh_state_v10', JSON.stringify(state)); alert("Saved to Browser."); editMode = false; render(); }
     function resetProgress() { document.querySelectorAll('.item').forEach(i => i.classList.remove('completed')); }
-
-    function render() {
-        renderFactions();
-        renderStrats();
-        renderBuild();
-        document.getElementById('currentFactionLabel').innerText = currentFac;
-    }
+    function render() { renderFactions(); renderStrats(); renderBuild(); document.getElementById('currentFactionLabel').innerText = currentFac; }
     render();
 </script>
 </body>
