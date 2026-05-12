@@ -27,6 +27,7 @@
             height: 100vh;
         }
 
+        /* Sidebar Navigation */
         nav {
             width: 80px;
             background: #08090a;
@@ -55,14 +56,16 @@
 
         .faction-icon.active { background: var(--accent); color: #000; }
 
-        main { flex: 1; padding: 30px; overflow-y: auto; }
+        /* Main View */
+        main { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; }
 
         .header-controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1000px;
-            margin: 0 auto 30px;
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto 20px;
         }
 
         .sub-nav {
@@ -70,7 +73,6 @@
             gap: 10px;
             margin-bottom: 20px;
             justify-content: center;
-            align-items: center;
             flex-wrap: wrap;
         }
 
@@ -88,11 +90,13 @@
 
         .strat-pill.active { border-color: var(--accent); color: var(--accent); }
 
+        /* Grid for Phases */
         .grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            max-width: 1000px;
+            max-width: 1100px;
+            width: 100%;
             margin: 0 auto;
         }
 
@@ -125,58 +129,47 @@
 
         .item.completed { opacity: 0.2; filter: grayscale(1); }
 
-        .tag {
-            width: 4px;
-            height: 20px;
-            margin-right: 10px;
-            border-radius: 2px;
-        }
-
+        .tag { width: 4px; height: 20px; margin-right: 10px; border-radius: 2px; }
         .tag-unit { background: var(--color-unit); }
         .tag-build { background: var(--color-build); }
         .tag-tech { background: var(--color-tech); }
 
-        .delete-btn {
-            color: var(--danger);
-            font-weight: bold;
-            margin-left: 10px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            line-height: 1;
-        }
-
-        .add-btn {
+        /* Tactical Intel Section */
+        .intel-panel {
+            max-width: 1100px;
             width: 100%;
-            background: none;
-            border: 1px dashed var(--border);
-            color: var(--text-dim);
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 6px;
-            margin-top: 10px;
+            margin: 40px auto 0;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
         }
 
-        .add-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-        [contenteditable="true"] {
-            border-bottom: 1px dashed var(--accent);
-            outline: none;
-            min-width: 20px;
-            display: inline-block;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
+        .intel-box h3 {
             font-size: 0.8rem;
-            font-weight: bold;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
         }
 
+        .stack-list { padding: 0; margin: 0; list-style: none; font-size: 0.85rem; }
+        .stack-list li { margin-bottom: 12px; line-height: 1.4; color: var(--text-dim); }
+        .stack-list b { color: var(--text-main); display: block; margin-bottom: 2px; }
+
+        .counter-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        .counter-table th { text-align: left; color: var(--accent); padding: 8px; border-bottom: 1px solid var(--border); font-size: 0.7rem; text-transform: uppercase; }
+        .counter-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-dim); }
+        .counter-table tr:last-child td { border: none; }
+
+        /* Controls */
+        .btn { padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.2s; }
         .btn-save { background: #2e7d32; color: white; }
         .btn-edit { background: var(--accent); color: #000; }
-        .btn-add-strat { background: #444; color: white; }
+        .delete-btn { color: var(--danger); font-weight: bold; margin-left: 10px; cursor: pointer; font-size: 1.1rem; }
+        [contenteditable="true"] { border-bottom: 1px dashed var(--accent); outline: none; }
+        .add-btn { width: 100%; background: none; border: 1px dashed var(--border); color: var(--text-dim); padding: 8px; cursor: pointer; margin-top: 10px; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -196,17 +189,33 @@
     <div class="sub-nav" id="stratNav"></div>
 
     <div class="grid" id="buildGrid">
-        <div class="phase-card" id="early">
-            <span class="phase-title">Early Game</span>
-            <div class="items-container"></div>
+        <div class="phase-card" id="early"><span class="phase-title">Early Game</span><div class="items-container"></div></div>
+        <div class="phase-card" id="mid"><span class="phase-title">Mid Game</span><div class="items-container"></div></div>
+        <div class="phase-card" id="end"><span class="phase-title">End Game</span><div class="items-container"></div></div>
+    </div>
+
+    <!-- TACTICAL INTEL PANEL -->
+    <div class="intel-panel">
+        <div class="intel-box">
+            <h3>🧠 The Mental Stack</h3>
+            <ul class="stack-list">
+                <li><b>Are my resources floating?</b> If you have >500 Manpower, you’re falling behind. Spend it on infantry or global upgrades.</li>
+                <li><b>Where is the enemy's Fuel?</b> Cutting the enemy's Fuel for even 60 seconds can delay their first tank by several minutes.</li>
+                <li><b>Is my retreat path clear?</b> Never fight in a spot where a single snare or grenade can block your only way home.</li>
+                <li><b>Am I using my Munitions?</b> Munitions do zero damage sitting in the bank. Use mines, grenades, and loiters.</li>
+            </ul>
         </div>
-        <div class="phase-card" id="mid">
-            <span class="phase-title">Mid Game</span>
-            <div class="items-container"></div>
-        </div>
-        <div class="phase-card" id="end">
-            <span class="phase-title">End Game</span>
-            <div class="items-container"></div>
+        <div class="intel-box">
+            <h3>⚔️ Dynamic Counters</h3>
+            <table class="counter-table">
+                <thead><tr><th>If you see...</th><th>You need...</th></tr></thead>
+                <tbody>
+                    <tr><td>Mass Infantry</td><td>MG / HMG / Greyhound / 8Rad</td></tr>
+                    <tr><td>Light Vehicles</td><td>AT Guns / Bazookas / Fausts</td></tr>
+                    <tr><td>Heavy Tanks</td><td>Heavy AT / Tank Destroyers</td></tr>
+                    <tr><td>Buildings</td><td>Mortars / Flamers / Satchels</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </main>
@@ -225,7 +234,7 @@
         DAK: { "Standard": { early: [], mid: [], end: [] } }
     };
 
-    let state = JSON.parse(localStorage.getItem('coh_state_v5')) || defaultData;
+    let state = JSON.parse(localStorage.getItem('coh_state_v6')) || defaultData;
     let currentFac = 'USF';
     let currentStrat = Object.keys(state[currentFac])[0];
     let editMode = false;
@@ -237,11 +246,7 @@
             const el = document.createElement('div');
             el.className = `faction-icon ${f === currentFac ? 'active' : ''}`;
             el.innerText = f;
-            el.onclick = () => { 
-                currentFac = f; 
-                currentStrat = Object.keys(state[f])[0] || ""; 
-                render(); 
-            };
+            el.onclick = () => { currentFac = f; currentStrat = Object.keys(state[f])[0] || ""; render(); };
             nav.appendChild(el);
         });
     }
@@ -249,37 +254,23 @@
     function renderStrats() {
         const nav = document.getElementById('stratNav');
         nav.innerHTML = '';
-        
         Object.keys(state[currentFac]).forEach(s => {
             const el = document.createElement('div');
             el.className = `strat-pill ${s === currentStrat ? 'active' : ''}`;
-            el.innerHTML = `
-                <span onclick="selectStrat('${s}')">${s}</span>
-                ${editMode ? `<span class="delete-btn" onclick="deleteStrat('${s}')">×</span>` : ''}
-            `;
+            el.innerHTML = `<span onclick="selectStrat('${s}')">${s}</span>${editMode ? `<span class="delete-btn" onclick="deleteStrat('${s}')">×</span>` : ''}`;
             nav.appendChild(el);
         });
-
         if (editMode) {
             const addBtn = document.createElement('button');
-            addBtn.className = 'btn btn-add-strat';
-            addBtn.innerText = "+ New Strat";
-            addBtn.onclick = addStrat;
-            nav.appendChild(addBtn);
+            addBtn.className = 'btn'; addBtn.style.background="#444"; addBtn.style.color="#fff";
+            addBtn.innerText = "+ New Strat"; addBtn.onclick = addStrat; nav.appendChild(addBtn);
         }
     }
 
-    function selectStrat(s) {
-        currentStrat = s;
-        render();
-    }
+    function selectStrat(s) { currentStrat = s; render(); }
 
     function renderBuild() {
-        if (!currentStrat || !state[currentFac][currentStrat]) {
-            ['early', 'mid', 'end'].forEach(p => document.querySelector(`#${p} .items-container`).innerHTML = 'No strat selected');
-            return;
-        }
-
+        if (!currentStrat || !state[currentFac][currentStrat]) return;
         const build = state[currentFac][currentStrat];
         ['early', 'mid', 'end'].forEach(phase => {
             const container = document.querySelector(`#${phase} .items-container`);
@@ -287,26 +278,19 @@
             build[phase].forEach((item, index) => {
                 const div = document.createElement('div');
                 div.className = 'item';
-                div.onclick = (e) => { 
-                    if(!editMode) div.classList.toggle('completed'); 
-                };
+                div.onclick = () => { if(!editMode) div.classList.toggle('completed'); };
                 div.innerHTML = `
                     <div class="tag tag-${item.t}"></div>
-                    <span class="name" contenteditable="${editMode}" onblur="updateItemText('${phase}', ${index}, this.innerText)">${item.n}</span>
+                    <span contenteditable="${editMode}" onblur="updateItemText('${phase}', ${index}, this.innerText)">${item.n}</span>
                     <span style="margin-left:auto; font-size:0.6rem; color:var(--text-dim)" contenteditable="${editMode}" onblur="updateItemType('${phase}', ${index}, this.innerText)">${item.t}</span>
                     ${editMode ? `<span class="delete-btn" onclick="deleteItem('${phase}', ${index})">×</span>` : ''}
                 `;
                 container.appendChild(div);
             });
-            
             if(editMode) {
                 const add = document.createElement('button');
-                add.className = 'add-btn';
-                add.innerText = "+ Add Entry";
-                add.onclick = () => { 
-                    state[currentFac][currentStrat][phase].push({n: "New Entry", t: "unit"}); 
-                    render(); 
-                };
+                add.className = 'add-btn'; add.innerText = "+ Add Entry";
+                add.onclick = () => { state[currentFac][currentStrat][phase].push({n: "New Entry", t: "unit"}); render(); };
                 container.appendChild(add);
             }
         });
@@ -314,28 +298,9 @@
 
     function updateItemText(phase, idx, val) { state[currentFac][currentStrat][phase][idx].n = val; }
     function updateItemType(phase, idx, val) { state[currentFac][currentStrat][phase][idx].t = val.toLowerCase(); }
-
-    function deleteItem(phase, idx) {
-        state[currentFac][currentStrat][phase].splice(idx, 1);
-        render();
-    }
-
-    function addStrat() {
-        const name = prompt("Enter Strategy Name:");
-        if (name) {
-            state[currentFac][name] = { early: [], mid: [], end: [] };
-            currentStrat = name;
-            render();
-        }
-    }
-
-    function deleteStrat(s) {
-        if (confirm(`Delete the "${s}" build order?`)) {
-            delete state[currentFac][s];
-            currentStrat = Object.keys(state[currentFac])[0] || "";
-            render();
-        }
-    }
+    function deleteItem(phase, idx) { state[currentFac][currentStrat][phase].splice(idx, 1); render(); }
+    function addStrat() { const name = prompt("Enter Strategy Name:"); if (name) { state[currentFac][name] = { early: [], mid: [], end: [] }; currentStrat = name; render(); } }
+    function deleteStrat(s) { if (confirm(`Delete "${s}"?`)) { delete state[currentFac][s]; currentStrat = Object.keys(state[currentFac])[0] || ""; render(); } }
 
     function toggleEdit() {
         editMode = !editMode;
@@ -344,15 +309,13 @@
     }
 
     function saveData() {
-        localStorage.setItem('coh_state_v5', JSON.stringify(state));
-        alert("Intelligence saved to local archives.");
+        localStorage.setItem('coh_state_v6', JSON.stringify(state));
+        alert("Tactical data archived.");
         editMode = false;
         render();
     }
 
-    function resetProgress() {
-        document.querySelectorAll('.item').forEach(i => i.classList.remove('completed'));
-    }
+    function resetProgress() { document.querySelectorAll('.item').forEach(i => i.classList.remove('completed')); }
 
     function render() {
         renderFactions();
